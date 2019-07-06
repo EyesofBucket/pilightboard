@@ -28,8 +28,8 @@ chan4 = AnalogIn(mcp, MCP.P4)
 chan5 = AnalogIn(mcp, MCP.P5)
 
 # variables for remap_range
-lin_max_raw = 65290
-lin_max_pro = 255
+raw = 65290
+pro = 255
 
 def remap_range(value, left_max, right_max, channel):
     value_scaled = ((value / left_max) * right_max) + (1000 * (channel + 1))
@@ -37,17 +37,17 @@ def remap_range(value, left_max, right_max, channel):
 
 def read_channel(x):
     if x == 0:
-        scha = remap_range(chan0.value, lin_max_raw, lin_max_pro, x)
+        scha = remap_range(chan0.value, raw, pro, x)
     if x == 1:
-        scha = remap_range(chan1.value, lin_max_raw, lin_max_pro, x)
+        scha = remap_range(chan1.value, raw, pro, x)
     if x == 2:
-        scha = remap_range(chan2.value, lin_max_raw, lin_max_pro, x)
+        scha = remap_range(chan2.value, raw, pro, x)
     if x == 3:
-        scha = remap_range(chan0.value, lin_max_raw, lin_max_pro, x)
+        scha = remap_range(chan0.value, raw, pro, x)
     if x == 4:
-        scha = remap_range(chan1.value, lin_max_raw, lin_max_pro, x)
+        scha = remap_range(chan1.value, raw, pro, x)
     if x == 5:
-        scha = remap_range(chan2.value, lin_max_raw, lin_max_pro, x)
+        scha = remap_range(chan2.value, raw, pro, x)
     print(scha)
     return int(scha)
 
