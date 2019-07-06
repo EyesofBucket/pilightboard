@@ -5,6 +5,7 @@ int x = 1;
 #define subval 1000
 
 void setup() {
+  // set all pins
   while(x <= ch_count) {
     pinMode(ch[x], OUTPUT);
     x++;
@@ -32,7 +33,7 @@ void loop() {
         //Serial.print(", ");
         //Serial.print(val);
         //Serial.print("\n");
-
+        
         x = ch_count;
       }
         if(val < 0) {
