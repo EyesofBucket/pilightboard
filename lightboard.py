@@ -48,3 +48,4 @@ while True:
         ser.write(str(read_channel(2, 5)).encode())
     except:
         print("Connection Lost.  Trying again.")
+        ser = serial.Serial('/dev/ttyACM0',9600)
