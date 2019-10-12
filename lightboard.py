@@ -18,6 +18,7 @@ def read_channel(x, y):
 
 def connect():
     interval=0
+    success=0
     while success==0:
         try:
             ser = serial.Serial('/dev/ttyACM'+interval,9600)
