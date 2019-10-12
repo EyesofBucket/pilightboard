@@ -19,12 +19,14 @@ def read_channel(x, y):
 def connect():
     interval=0
     success=0
-    
+
     while success==0:
         try:
             ser = serial.Serial('/dev/ttyACM' + str(interval),9600)
         except:
             interval+=1
+            if interval==20:
+                interval=0
         else:
             success=1
     
