@@ -21,7 +21,7 @@ def connect():
     success=0
     while success==0:
         try:
-            ser = serial.Serial('/dev/ttyACM'+interval,9600)
+            ser = serial.Serial('/dev/ttyACM'+str(interval),9600)
         except:
             interval+=1
         else:
