@@ -23,7 +23,7 @@ def connect():
     while success==0:
         try:
             ser = serial.Serial('/dev/ttyACM' + str(interval),9600)
-        except:
+        except OSError:
             interval+=1
             if interval==20:
                 interval=0
@@ -64,6 +64,6 @@ while True:
         ser.write(str(read_channel(0, 3)).encode())
         ser.write(str(read_channel(1, 4)).encode())
         ser.write(str(read_channel(2, 5)).encode())
-    except:
+    except OSError:
         print("Connection Lost.  Trying again.")
         ser = serial.Serial(connect(),9600)
