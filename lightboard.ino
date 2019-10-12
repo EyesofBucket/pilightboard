@@ -5,14 +5,17 @@ int chnum = 0;
 int chval = 0;
 #define ch_count 16
 #define multi 1000
+#define led 13
 
 void setup() {
+  pinMode(led, OUTPUT);
+  digitalWrite(led, HIGH);
   // set all pins
   while(x <= ch_count) {
     pinMode(ch[x], OUTPUT);
     x++;
   }
-Serial.begin(9600); // opens serial port, sets data rate to 9600 bps
+  Serial.begin(9600); // opens serial port, sets data rate to 9600 bps
 }
 
 void loop() {

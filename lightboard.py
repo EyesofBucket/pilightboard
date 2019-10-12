@@ -7,6 +7,15 @@ import board
 import adafruit_mcp3xxx.mcp3008 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 
+def remap_range(value, left_max, right_max, channel):
+    value_scaled = ((value / left_max) * right_max) + (1000 * (channel + 1))
+    return int(value_scaled)
+
+def read_channel(x, y):
+    scha = remap_range(chan[x].value, raw, pro, y)
+    print(scha)
+    return int(scha)
+
 # establish serial connection
 ser = serial.Serial('/dev/ttyACM0',9600)
 
@@ -28,20 +37,14 @@ chan = [AnalogIn(mcp1, MCP.P0), AnalogIn(mcp1, MCP.P1), AnalogIn(mcp1, MCP.P2), 
 raw = 65290
 pro = 255
 
-def remap_range(value, left_max, right_max, channel):
-    value_scaled = ((value / left_max) * right_max) + (1000 * (channel + 1))
-    return int(value_scaled)
-
-def read_channel(x, y):
-    scha = remap_range(chan[x].value, raw, pro, y)
-    print(scha)
-    return int(scha)
-
 while True:
     # read/write channels
-    ser.write(str(read_channel(0, 0)).encode())
-    ser.write(str(read_channel(1, 1)).encode())
-    ser.write(str(read_channel(2, 2)).encode())
-    ser.write(str(read_channel(0, 3)).encode())
-    ser.write(str(read_channel(1, 4)).encode())
-    ser.write(str(read_channel(2, 5)).encode())
+    try:
+        ser.write(str(read_channel(0, 0)).encode())
+        ser.write(str(read_channel(1, 1)).encode())
+        ser.write(str(read_channel(2, 2)).encode())
+        ser.write(str(read_channel(0, 3)).encode())
+        ser.write(str(read_channel(1, 4)).encode())
+        ser.write(str(read_channel(2, 5)).encode())
+    except:
+        print Connection Lost.  Trying again.
