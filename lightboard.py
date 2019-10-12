@@ -33,7 +33,11 @@ def connect():
     print("Connection Established. '/dev/ttyACM" + str(interval))
     return("/dev/ttyACM" + str(interval))
 
-
+print('=====================')
+print('  Pi Lighboard v0.5')
+print('=====================')
+print('')
+print('Awaiting connection to Teensy...')
 # establish serial connection
 ser = serial.Serial(connect(),9600)
 
