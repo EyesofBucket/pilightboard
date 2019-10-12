@@ -19,6 +19,7 @@ def read_channel(x, y):
 def connect():
     interval=0
     success=0
+    
     while success==0:
         try:
             ser = serial.Serial('/dev/ttyACM' + str(interval),9600)
@@ -26,13 +27,13 @@ def connect():
             interval+=1
         else:
             success=1
+    
     print("Connection Established. '/dev/ttyACM" + str(interval))
-    return
+    return("/dev/ttyACM" + str(interval))
 
 
 # establish serial connection
-# ser = serial.Serial('/dev/ttyACM0',9600)
-connect()
+ser = serial.Serial(connect(),9600)
 
 # create the spi bus
 spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
@@ -54,13 +55,13 @@ pro = 255
 
 while True:
     # read/write channels
-    # try:
+    try:
         ser.write(str(read_channel(0, 0)).encode())
         ser.write(str(read_channel(1, 1)).encode())
         ser.write(str(read_channel(2, 2)).encode())
         ser.write(str(read_channel(0, 3)).encode())
         ser.write(str(read_channel(1, 4)).encode())
         ser.write(str(read_channel(2, 5)).encode())
-    # except:
-        # print("Connection Lost.  Trying again.")
-       # connect()
+    except:
+        print("Connection Lost.  Trying again.")
+        ser = serial.Serial(connect(),9600)
