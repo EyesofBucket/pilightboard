@@ -47,4 +47,4 @@ while True:
         ser.write(str(read_channel(1, 4)).encode())
         ser.write(str(read_channel(2, 5)).encode())
     except:
-        print Connection Lost.  Trying again.
+        print("Connection Lost.  Trying again.")
