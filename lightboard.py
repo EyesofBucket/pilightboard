@@ -16,8 +16,22 @@ def read_channel(x, y):
     print(scha)
     return int(scha)
 
+def connect():
+    interval=0
+    while success==0:
+        try:
+            ser = serial.Serial('/dev/ttyACM'+interval,9600)
+        except:
+            interval+=1
+        else:
+            success=1
+    print("Connection Established.")
+    return
+
+
 # establish serial connection
-ser = serial.Serial('/dev/ttyACM0',9600)
+# ser = serial.Serial('/dev/ttyACM0',9600)
+connect()
 
 # create the spi bus
 spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
@@ -48,4 +62,4 @@ while True:
         ser.write(str(read_channel(2, 5)).encode())
     except:
         print("Connection Lost.  Trying again.")
-        ser = serial.Serial('/dev/ttyACM0',9600)
+        connect()
