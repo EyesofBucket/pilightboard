@@ -54,13 +54,13 @@ pro = 255
 
 while True:
     # read/write channels
-    try:
+    # try:
         ser.write(str(read_channel(0, 0)).encode())
         ser.write(str(read_channel(1, 1)).encode())
         ser.write(str(read_channel(2, 2)).encode())
         ser.write(str(read_channel(0, 3)).encode())
         ser.write(str(read_channel(1, 4)).encode())
         ser.write(str(read_channel(2, 5)).encode())
-    except:
-        print("Connection Lost.  Trying again.")
-        connect()
+    # except:
+        # print("Connection Lost.  Trying again.")
+       # connect()
