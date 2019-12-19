@@ -26,7 +26,15 @@ void loop() {
    
     chnum = float(val) / float(multi);
     chval = val % multi;
-
+    if(chnum==6 && chval==127) {
+      analogWrite(ch[0], 255);
+	  analogWrite(ch[1], 255);
+	  analogWrite(ch[2], 255);
+	  analogWrite(ch[3], 255);
+	  analogWrite(ch[4], 255);
+	  analogWrite(ch[5], 255);
+	  
+    }
     analogWrite(ch[chnum], chval);
     
     //Serial.print(chnum);
