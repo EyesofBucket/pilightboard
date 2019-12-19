@@ -7,14 +7,23 @@ import board
 import adafruit_mcp3xxx.mcp3008 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 
-def remap_range(value, left_max, right_max, channel):
-    value_scaled = ((value / left_max) * right_max) + (1000 * (channel + 1))
-    return int(value_scaled)
-
 def read_channel(x, y):
-    scha = remap_range(chan[x].value, raw, pro, y)
+    #scha = remap_range(chan[x].value, raw, pro, y)
+    if preval[x] == chan[x].value:
+        return
+    preval[x] = chan[x].value
+	value_scaled = ((chan[x].value / raw) * pro) + (1000 * (y + 1)) 
     print(scha)
-    return int(scha)
+    try:
+        ser.write(str(scha).encode())
+    except OSError:
+        print("Connection Lost.  Trying again.")
+        ser = serial.Serial(connect(),9600)
+    return
+    
+#def remap_range(value, left_max, right_max, channel):
+#    value_scaled = ((value / left_max) * right_max) + (1000 * (channel + 1))
+#    return int(value_scaled)
 
 def connect():
     interval=0
@@ -54,7 +63,7 @@ mcp2 = MCP.MCP3008(spi, cs2)
 
 # create analog input channels
 chan = [AnalogIn(mcp1, MCP.P0), AnalogIn(mcp1, MCP.P1), AnalogIn(mcp1, MCP.P2), AnalogIn(mcp1, MCP.P3), AnalogIn(mcp1, MCP.P4), AnalogIn(mcp1, MCP.P5), AnalogIn(mcp1, MCP.P6), AnalogIn(mcp1, MCP.P7)]
-
+preval = [0, 0, 0, 0, 0, 0, 0, 0]
 # variables for remap_range
 raw = 65290
 pro = 255
@@ -62,12 +71,9 @@ pro = 255
 while True:
     # read/write channels
     try:
-        ser.write(str(read_channel(0, 0)).encode())
-        ser.write(str(read_channel(1, 1)).encode())
-        ser.write(str(read_channel(2, 2)).encode())
-        ser.write(str(read_channel(0, 3)).encode())
-        ser.write(str(read_channel(1, 4)).encode())
-        ser.write(str(read_channel(2, 5)).encode())
-    except OSError:
-        print("Connection Lost.  Trying again.")
-        ser = serial.Serial(connect(),9600)
+        read_channel(0, 0)
+        read_channel(1, 1)
+        read_channel(2, 2)
+        read_channel(0, 3)
+        read_channel(1, 4)
+        read_channel(2, 5)
