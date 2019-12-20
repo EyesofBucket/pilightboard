@@ -70,10 +70,9 @@ pro = 255
 
 while True:
     # read/write channels
-    try:
-        read_channel(0, 0)
-        read_channel(1, 1)
-        read_channel(2, 2)
-        read_channel(0, 3)
-        read_channel(1, 4)
-        read_channel(2, 5)
+    read_channel(0, 0)
+    read_channel(1, 1)
+    read_channel(2, 2)
+    read_channel(0, 3)
+    read_channel(1, 4)
+    read_channel(2, 5)
