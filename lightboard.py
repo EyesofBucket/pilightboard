@@ -19,6 +19,7 @@ def read_channel(x, y, ser):
     except OSError:
         print("Connection Lost.  Trying again.")
         ser = serial.Serial(connect(),9600)
+    print(value_scaled)
     return
 
 #def remap_range(value, left_max, right_max, channel):
