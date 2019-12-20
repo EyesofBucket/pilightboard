@@ -8,24 +8,20 @@ import adafruit_mcp3xxx.mcp3008 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 
 def read_channel(x, y, ser):
-    #scha = remap_range(chan[x].value, raw, pro, y)
     value_scaled = int(((chan[x].value / raw) * pro))
-    print(value_scaled)
     if preval[x] == value_scaled:
         return
     preval[x] = value_scaled
+
     chval = value_scaled + (1000 * (y + 1))
     print(chval)
+    
     try:
         ser.write(str(chval).encode())
     except OSError:
         print("Connection Lost.  Trying again.")
         ser = serial.Serial(connect(),9600)
     return
-
-#def remap_range(value, left_max, right_max, channel):
-#    value_scaled = ((value / left_max) * right_max) + (1000 * (channel + 1))
-#    return int(value_scaled)
 
 def connect():
     interval=0
@@ -72,7 +68,7 @@ pro = 255
 
 while True:
     # read/write channels
-    time.sleep(1)
+    # time.sleep(1)
     read_channel(0, 0, ser)
     read_channel(1, 1, ser)
     read_channel(2, 2, ser)
