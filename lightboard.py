@@ -12,7 +12,7 @@ def read_channel(x, y, ser):
     if preval[x] == chan[x].value:
         return
     preval[x] = chan[x].value
-    value_scaled = ((chan[x].value / raw) * pro) + (1000 * (y + 1)) 
+    value_scaled = int(((chan[x].value / raw) * pro) + (1000 * (y + 1)))
     print(value_scaled)
     try:
         ser.write(str(value_scaled).encode())
