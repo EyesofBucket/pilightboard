@@ -7,7 +7,7 @@ import board
 import adafruit_mcp3xxx.mcp3008 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 
-def read_channel(x, y):
+def read_channel(x, y, ser):
     #scha = remap_range(chan[x].value, raw, pro, y)
     if preval[x] == chan[x].value:
         return
@@ -70,9 +70,9 @@ pro = 255
 
 while True:
     # read/write channels
-    read_channel(0, 0)
-    read_channel(1, 1)
-    read_channel(2, 2)
-    read_channel(0, 3)
-    read_channel(1, 4)
-    read_channel(2, 5)
+    read_channel(0, 0, ser)
+    read_channel(1, 1, ser)
+    read_channel(2, 2, ser)
+    read_channel(0, 3, ser)
+    read_channel(1, 4, ser)
+    read_channel(2, 5, ser)
