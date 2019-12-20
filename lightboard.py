@@ -12,7 +12,7 @@ def read_channel(x, y):
     if preval[x] == chan[x].value:
         return
     preval[x] = chan[x].value
-	value_scaled = ((chan[x].value / raw) * pro) + (1000 * (y + 1)) 
+    value_scaled = ((chan[x].value / raw) * pro) + (1000 * (y + 1)) 
     print(scha)
     try:
         ser.write(str(scha).encode())
@@ -20,7 +20,7 @@ def read_channel(x, y):
         print("Connection Lost.  Trying again.")
         ser = serial.Serial(connect(),9600)
     return
-    
+
 #def remap_range(value, left_max, right_max, channel):
 #    value_scaled = ((value / left_max) * right_max) + (1000 * (channel + 1))
 #    return int(value_scaled)
