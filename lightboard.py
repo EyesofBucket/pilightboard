@@ -9,17 +9,17 @@ from adafruit_mcp3xxx.analog_in import AnalogIn
 
 def read_channel(x, y, ser):
     #scha = remap_range(chan[x].value, raw, pro, y)
-    if preval[x] == chan[x].value:
+    value_scaled = int(((chan[x].value / raw) * pro)
+    if preval[x] == int(value_scaled):
         return
-    preval[x] = chan[x].value
-    value_scaled = int(((chan[x].value / raw) * pro) + (1000 * (y + 1)))
-    print(value_scaled)
+    preval[x] = value_scaled
+    chval = value_scaled + (1000 * (y + 1)))
+    print(chval)
     try:
-        ser.write(str(value_scaled).encode())
+        ser.write(str(chval).encode())
     except OSError:
         print("Connection Lost.  Trying again.")
         ser = serial.Serial(connect(),9600)
-    print(value_scaled)
     return
 
 #def remap_range(value, left_max, right_max, channel):
