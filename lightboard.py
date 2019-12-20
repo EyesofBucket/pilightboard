@@ -13,9 +13,9 @@ def read_channel(x, y):
         return
     preval[x] = chan[x].value
     value_scaled = ((chan[x].value / raw) * pro) + (1000 * (y + 1)) 
-    print(scha)
+    print(value_scaled)
     try:
-        ser.write(str(scha).encode())
+        ser.write(str(value_scaled).encode())
     except OSError:
         print("Connection Lost.  Trying again.")
         ser = serial.Serial(connect(),9600)
