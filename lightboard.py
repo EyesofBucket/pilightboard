@@ -20,8 +20,8 @@ def read_channel(x, y, ser):
         ser.write(str(chval).encode())
     except OSError:
         print("Connection Lost.  Trying again.")
-        ser = serial.Serial(connect(),9600)
-    return
+        return(1)
+    return(0)
 
 def connect():
     interval=0
@@ -69,10 +69,12 @@ pro = 255
 while True:
     # read/write channels
     # time.sleep(1)
-    read_channel(0, 0, ser)
-    read_channel(1, 1, ser)
-    read_channel(2, 2, ser)
-    read_channel(3, 3, ser)
-    read_channel(4, 4, ser)
-    read_channel(5, 5, ser)
-    read_channel(6, 6, ser)
+    fail = read_channel(0, 0, ser)
+    fail = read_channel(1, 1, ser)
+    fail = read_channel(2, 2, ser)
+    fail = read_channel(3, 3, ser)
+    fail = read_channel(4, 4, ser)
+    fail = read_channel(5, 5, ser)
+    fail = read_channel(6, 6, ser)
+    if fail!=0:
+        ser = serial.Serial(connect(),9600)
