@@ -10,7 +10,7 @@ from adafruit_mcp3xxx.analog_in import AnalogIn
 def read_channel(x, y, ser):
     #scha = remap_range(chan[x].value, raw, pro, y)
     value_scaled = int(((chan[x].value / raw) * pro))
-    if preval[x] == chan[x].value:
+    if preval[x] == value_scaled:
         return
     preval[x] = value_scaled
     chval = value_scaled + (1000 * (y + 1))
