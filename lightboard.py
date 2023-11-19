@@ -58,7 +58,7 @@ mcp2 = MCP.MCP3008(spi, cs2)
 # create analog input channels
 chan = []
 for i in range(8):
-    chan.append(eval('AnalogIn(mcp1, MCP.P{1}'.format(i)))
+    chan.append(eval('AnalogIn(mcp1, MCP.P{0}'.format(i)))
 
 fader_value = [0, 0, 0, 0, 0, 0, 0, 0]
 
