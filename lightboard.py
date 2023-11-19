@@ -8,20 +8,16 @@ import adafruit_mcp3xxx.mcp3008 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 
 def read_channel(x, y, ser):
-    value_scaled = int(((chan[x].value / raw) * pro))
-    if preval[x] == value_scaled:
+    value_scaled = int(((chan[x].value / 65290) * 255))
+    if fader_value[x] == value_scaled:
         return
-    preval[x] = value_scaled
+    fader_value[x] = value_scaled
 
     chval = value_scaled + (1000 * (y + 1))
     print(chval)
     
-    try:
-        ser.write(str(chval).encode())
-    except OSError:
-        print("Connection Lost!")
-        connect()
-    return(0)
+    ser.write(str(chval).encode())
+    return()
 
 def connect():
     interval=0
@@ -39,14 +35,14 @@ def connect():
             success=1
     
     print("Connection Established. '/dev/ttyACM" + str(interval))
-    return("/dev/ttyACM" + str(interval))
+    return(ser)
 
 print('=================')
 print('  Pi Lightboard  ')
 print('=================')
 print('')
 # establish serial connection
-ser = serial.Serial(connect(),9600)
+ser = connect()
 
 # create the spi bus
 spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
@@ -64,20 +60,18 @@ chan = []
 for i in range(8):
     chan.append(eval('AnalogIn(mcp1, MCP.P{1}'.format(i)))
 
-preval = [0, 0, 0, 0, 0, 0, 0, 0]
-# variables for remap_range
-raw = 65290
-pro = 255
+fader_value = [0, 0, 0, 0, 0, 0, 0, 0]
 
+# Main loop
 while True:
-    # read/write channels
-    # time.sleep(1)
-    fail = read_channel(0, 0, ser)
-    fail = read_channel(1, 1, ser)
-    fail = read_channel(2, 2, ser)
-    fail = read_channel(3, 3, ser)
-    fail = read_channel(4, 4, ser)
-    fail = read_channel(5, 5, ser)
-    fail = read_channel(6, 6, ser)
-    if fail!=0:
-        ser = serial.Serial(connect(),9600)
+    try:
+        read_channel(0, 0, ser)
+        read_channel(1, 1, ser)
+        read_channel(2, 2, ser)
+        read_channel(3, 3, ser)
+        read_channel(4, 4, ser)
+        read_channel(5, 5, ser)
+        read_channel(6, 6, ser)
+    except OSError:
+        print("Connection Lost!")
+        ser = connect()
