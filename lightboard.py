@@ -19,14 +19,15 @@ def read_channel(x, y, ser):
     try:
         ser.write(str(chval).encode())
     except OSError:
-        print("Connection Lost.  Trying again.")
-        return(1)
+        print("Connection Lost!")
+        connect()
     return(0)
 
 def connect():
     interval=0
     success=0
 
+    print('Awaiting connection to Teensy...')
     while success==0:
         try:
             ser = serial.Serial('/dev/ttyACM' + str(interval),9600)
@@ -40,11 +41,10 @@ def connect():
     print("Connection Established. '/dev/ttyACM" + str(interval))
     return("/dev/ttyACM" + str(interval))
 
-print('================')
-print('  Pi Lighboard  ')
-print('================')
+print('=================')
+print('  Pi Lightboard  ')
+print('=================')
 print('')
-print('Awaiting connection to Teensy...')
 # establish serial connection
 ser = serial.Serial(connect(),9600)
 
@@ -60,7 +60,10 @@ mcp1 = MCP.MCP3008(spi, cs1)
 mcp2 = MCP.MCP3008(spi, cs2)
 
 # create analog input channels
-chan = [AnalogIn(mcp1, MCP.P0), AnalogIn(mcp1, MCP.P1), AnalogIn(mcp1, MCP.P2), AnalogIn(mcp1, MCP.P3), AnalogIn(mcp1, MCP.P4), AnalogIn(mcp1, MCP.P5), AnalogIn(mcp1, MCP.P6), AnalogIn(mcp1, MCP.P7)]
+chan = []
+for i in range(8):
+    chan.append(eval('AnalogIn(mcp1, MCP.P{1}'.format(i)))
+
 preval = [0, 0, 0, 0, 0, 0, 0, 0]
 # variables for remap_range
 raw = 65290
