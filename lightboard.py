@@ -7,17 +7,7 @@ import board
 import adafruit_mcp3xxx.mcp3008 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 
-def read_channel(x, y, ser):
-    value_scaled = int(((chan[x].value / 65290) * 255))
-    if fader_value[x] == value_scaled:
-        return
-    fader_value[x] = value_scaled
-
-    chval = value_scaled + (1000 * (y + 1))
-    print(chval)
-    
-    ser.write(str(chval).encode())
-    return()
+current_values = {}
 
 def connect():
     interval=0
@@ -36,6 +26,41 @@ def connect():
     
     print("Connection Established. '/dev/ttyACM" + str(interval))
     return(ser)
+
+def get_faders():
+    position = {}
+
+    for i in range(fader_count):
+        position[i] = int(((chan[i].value / 65290) * 255))
+
+    return(position)
+
+def write_channels(ser, channel_values):
+    for channel, set_value in channel_values.items():
+        message = str(channel) + ',' + str(set_value)
+        print(message)
+    
+        ser.write(message.encode())
+        current_values[channel] = set_value
+    return()
+
+def fade_channels(ser, channel_values, duration):
+    step_length = 0.1
+    steps = duration / step_length
+    result = [{} for _ in range(steps)]
+
+    for channel, set_value in channel_values.items():
+        step_size = set_value - current_values[channel] / steps
+
+        for s in range(steps - 1):
+            current_value = current_value + step_size
+            result[s][channel] = int(current_value)
+
+        result[s][channel] = set_value
+
+    for r in result:
+        write_channels(ser, r)
+        time.sleep(step_length)
 
 print('=================')
 print('  Pi Lightboard  ')
@@ -60,18 +85,11 @@ chan = []
 for i in range(8):
     chan.append(eval('AnalogIn(mcp1, MCP.P{0})'.format(i)))
 
-fader_value = [0, 0, 0, 0, 0, 0, 0, 0]
-
 # Main loop
 while True:
     try:
-        read_channel(0, 0, ser)
-        read_channel(1, 1, ser)
-        read_channel(2, 2, ser)
-        read_channel(3, 3, ser)
-        read_channel(4, 4, ser)
-        read_channel(5, 5, ser)
-        read_channel(6, 6, ser)
+        for channel, fader_value in get_faders().items():
+            write_channel(ser, fader_value)
     except OSError:
         print("Connection Lost!")
         ser = connect()
