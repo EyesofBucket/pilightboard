@@ -32,7 +32,7 @@ def get_faders():
     position = []
 
     for i in range(fader_count):
-        position.append() = int(((faders[i].value / 65290) * 255))
+        position.append(int(((faders[i].value / 65290) * 255)))
 
     return(position)
 
