@@ -83,7 +83,7 @@ for i in range(fader_count):
     faders.append(eval('AnalogIn(mcp1, MCP.P{0})'.format(i)))
 
 while True:
-    fader_values = get_faders():
+    fader_values = get_faders()
     try:
         fade_channels(ser, {1: fader_values[0]}, fader_values[1])
     except OSError:
