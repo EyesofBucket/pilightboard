@@ -48,7 +48,7 @@ def write_channels(ser, channel_values):
 def fade_channels(ser, channel_values, duration):
     step_length = 0.1
     steps = duration / step_length
-    result = [{} for _ in range(steps)]
+    result = [{} for _ in range(int(steps))]
 
     for channel, set_value in channel_values.items():
         current_value = current_values[channel] 
