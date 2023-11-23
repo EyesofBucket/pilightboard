@@ -8,7 +8,7 @@ import adafruit_mcp3xxx.mcp3008 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 
 fader_count = 8
-current_values = {}
+current_values = [None for _ in range(8)]
 
 def connect():
     interval=0
