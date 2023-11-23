@@ -7,6 +7,7 @@ import board
 import adafruit_mcp3xxx.mcp3008 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 
+fader_count = 8
 current_values = {}
 
 def connect():
@@ -28,10 +29,10 @@ def connect():
     return(ser)
 
 def get_faders():
-    position = {}
+    position = []
 
     for i in range(fader_count):
-        position[i] = int(((chan[i].value / 65290) * 255))
+        position.append() = int(((faders[i].value / 65290) * 255))
 
     return(position)
 
@@ -50,7 +51,8 @@ def fade_channels(ser, channel_values, duration):
     result = [{} for _ in range(steps)]
 
     for channel, set_value in channel_values.items():
-        step_size = set_value - current_values[channel] / steps
+        current_value = current_values[channel] 
+        step_size = set_value - current_value / steps
 
         for s in range(steps - 1):
             current_value = current_value + step_size
@@ -66,30 +68,24 @@ print('=================')
 print('  Pi Lightboard  ')
 print('=================')
 print('')
-# establish serial connection
 ser = connect()
 
-# create the spi bus
 spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
  
-# create the cs (chip select)
 cs1 = digitalio.DigitalInOut(board.D22)
 cs2 = digitalio.DigitalInOut(board.D22)
  
-# create the mcp object
 mcp1 = MCP.MCP3008(spi, cs1)
 mcp2 = MCP.MCP3008(spi, cs2)
 
-# create analog input channels
-chan = []
-for i in range(8):
-    chan.append(eval('AnalogIn(mcp1, MCP.P{0})'.format(i)))
+faders = []
+for i in range(fader_count):
+    faders.append(eval('AnalogIn(mcp1, MCP.P{0})'.format(i)))
 
-# Main loop
 while True:
+    fader_values = get_faders():
     try:
-        for channel, fader_value in get_faders().items():
-            write_channel(ser, fader_value)
+        fade_channels(ser, {1: fader_values[0]}, fader_values[1])
     except OSError:
         print("Connection Lost!")
         ser = connect()
