@@ -38,7 +38,7 @@ def get_faders():
 
 def write_channels(ser, channel_values):
     for channel, set_value in channel_values.items():
-        message = str(channel) + ',' + str(set_value)
+        message = str(channel) + str(set_value)
         print(message)
     
         ser.write(message.encode())
