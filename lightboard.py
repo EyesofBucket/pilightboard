@@ -36,33 +36,34 @@ def get_faders():
 
     return(position)
 
-def write_channels(ser, channel_values):
-    for channel, set_value in channel_values.items():
-        message = str(channel) + ',' + str(set_value)
-        print(message)
-    
-        ser.write(message.encode())
-        current_values[channel] = set_value
+def write_channel(ser, data):
+    message = data['value'] + (1000 * (data['channel'] + 1))
+    print(message)
+
+    ser.write(str(message).encode())
+    current_values[data['channel']] = data['value']
     return()
 
-def fade_channels(ser, channel_values, duration):
-    step_length = 0.1
-    steps = duration / step_length
-    result = [{} for _ in range(int(steps))]
+def fade_channels(ser, data, duration):
+    step_length = 0.05
+    steps = (duration / step_length) + 1
 
-    for channel, set_value in channel_values.items():
-        current_value = current_values[channel] 
-        step_size = set_value - current_value / steps
-
-        for s in range(steps - 1):
-            current_value = current_value + step_size
-            result[s][channel] = int(current_value)
-
-        result[s][channel] = set_value
-
-    for r in result:
-        write_channels(ser, r)
+    x = 0
+    for d in data:
+        print(d)
+        data[x]['step_size'] = (d['value_end'] - d['value_start']) / steps
+        x+=1
+        
+    for step in range(int(steps)):
+        for d in data:
+            ch_data = {'channel': d['channel'],
+                       'value': int(d['value_start'] + (d['step_size'] * step))}
+            write_channel(ser, ch_data)
         time.sleep(step_length)
+
+    for d in data:
+        ch_data = {'channel': d['channel'], 'value': d['value_end']}
+        write_channel(ser, ch_data)
 
 print('=================')
 print('  Pi Lightboard  ')
@@ -82,10 +83,12 @@ faders = []
 for i in range(fader_count):
     faders.append(eval('AnalogIn(mcp1, MCP.P{0})'.format(i)))
 
+fd = [{'channel': 1, 'value_start': 0, 'value_end': 255}]
+
 while True:
     fader_values = get_faders()
     try:
-        fade_channels(ser, {1: fader_values[0]}, fader_values[1])
+        fade_channels(ser, fd, 2)
     except OSError:
         print("Connection Lost!")
         ser = connect()
