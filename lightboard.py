@@ -34,11 +34,12 @@ def get_faders():
     for i in range(fader_count):
         position.append(int(((faders[i].value / 65290) * 255)))
 
+    #print(position)
     return(position)
 
 def write_channel(ser, data):
     message = data['value'] + (1000 * (data['channel'] + 1))
-    print(message)
+    #print(message)
 
     ser.write(str(message).encode())
     current_values[data['channel']] = data['value']
@@ -50,7 +51,7 @@ def fade_channels(ser, data, duration):
 
     x = 0
     for d in data:
-        print(d)
+        #print(d)
         data[x]['step_size'] = (d['value_end'] - d['value_start']) / steps
         x+=1
         
@@ -83,12 +84,12 @@ faders = []
 for i in range(fader_count):
     faders.append(eval('AnalogIn(mcp1, MCP.P{0})'.format(i)))
 
-fd = [{'channel': 1, 'value_start': 0, 'value_end': 255}]
-
 while True:
     fader_values = get_faders()
+    fd = [{'channel': 1, 'value_start': current_values[1], 'value_end': fader_values[0]}]
+
     try:
-        fade_channels(ser, fd, 2)
+        fade_channels(ser, fd, fader_values[1] / 100)
     except OSError:
         print("Connection Lost!")
         ser = connect()
