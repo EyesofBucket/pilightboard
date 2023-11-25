@@ -7,26 +7,14 @@ import board
 import adafruit_mcp3xxx.mcp3008 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 
-def read_channel(x, y, ser):
-    value_scaled = int(((chan[x].value / raw) * pro))
-    if preval[x] == value_scaled:
-        return
-    preval[x] = value_scaled
-
-    chval = value_scaled + (1000 * (y + 1))
-    print(chval)
-    
-    try:
-        ser.write(str(chval).encode())
-    except OSError:
-        print("Connection Lost.  Trying again.")
-        return(1)
-    return(0)
+fader_count = 8
+current_values = [0 for _ in range(8)]
 
 def connect():
     interval=0
     success=0
 
+    print('Awaiting connection to Teensy...')
     while success==0:
         try:
             ser = serial.Serial('/dev/ttyACM' + str(interval),9600)
@@ -38,43 +26,70 @@ def connect():
             success=1
     
     print("Connection Established. '/dev/ttyACM" + str(interval))
-    return("/dev/ttyACM" + str(interval))
+    return(ser)
 
-print('================')
-print('  Pi Lighboard  ')
-print('================')
+def get_faders():
+    position = []
+
+    for i in range(fader_count):
+        position.append(int(((faders[i].value / 65290) * 255)))
+
+    #print(position)
+    return(position)
+
+def write_channel(ser, data):
+    message = data['value'] + (1000 * (data['channel'] + 1))
+    #print(message)
+
+    ser.write(str(message).encode())
+    current_values[data['channel']] = data['value']
+    return()
+
+def fade_channels(ser, data, duration):
+    step_length = 0.05
+    steps = (duration / step_length) + 1
+
+    x = 0
+    for d in data:
+        #print(d)
+        data[x]['step_size'] = (d['value_end'] - d['value_start']) / steps
+        x+=1
+        
+    for step in range(int(steps)):
+        for d in data:
+            ch_data = {'channel': d['channel'],
+                       'value': int(d['value_start'] + (d['step_size'] * step))}
+            write_channel(ser, ch_data)
+        time.sleep(step_length)
+
+    for d in data:
+        ch_data = {'channel': d['channel'], 'value': d['value_end']}
+        write_channel(ser, ch_data)
+
+print('=================')
+print('  Pi Lightboard  ')
+print('=================')
 print('')
-print('Awaiting connection to Teensy...')
-# establish serial connection
-ser = serial.Serial(connect(),9600)
+ser = connect()
 
-# create the spi bus
 spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
  
-# create the cs (chip select)
 cs1 = digitalio.DigitalInOut(board.D22)
 cs2 = digitalio.DigitalInOut(board.D22)
  
-# create the mcp object
 mcp1 = MCP.MCP3008(spi, cs1)
 mcp2 = MCP.MCP3008(spi, cs2)
 
-# create analog input channels
-chan = [AnalogIn(mcp1, MCP.P0), AnalogIn(mcp1, MCP.P1), AnalogIn(mcp1, MCP.P2), AnalogIn(mcp1, MCP.P3), AnalogIn(mcp1, MCP.P4), AnalogIn(mcp1, MCP.P5), AnalogIn(mcp1, MCP.P6), AnalogIn(mcp1, MCP.P7)]
-preval = [0, 0, 0, 0, 0, 0, 0, 0]
-# variables for remap_range
-raw = 65290
-pro = 255
+faders = []
+for i in range(fader_count):
+    faders.append(eval('AnalogIn(mcp1, MCP.P{0})'.format(i)))
 
 while True:
-    # read/write channels
-    # time.sleep(1)
-    fail = read_channel(0, 0, ser)
-    fail = read_channel(1, 1, ser)
-    fail = read_channel(2, 2, ser)
-    fail = read_channel(3, 3, ser)
-    fail = read_channel(4, 4, ser)
-    fail = read_channel(5, 5, ser)
-    fail = read_channel(6, 6, ser)
-    if fail!=0:
-        ser = serial.Serial(connect(),9600)
+    fader_values = get_faders()
+    fd = [{'channel': 1, 'value_start': current_values[1], 'value_end': fader_values[0]}]
+
+    try:
+        fade_channels(ser, fd, fader_values[1] / 100)
+    except OSError:
+        print("Connection Lost!")
+        ser = connect()
