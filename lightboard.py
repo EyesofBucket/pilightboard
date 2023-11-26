@@ -38,7 +38,7 @@ def get_faders():
     return(position)
 
 def write_channel(ser, data):
-    message = data['value'] + (1000 * (data['channel'] + 1))
+    message = 's{0} {1}\n'.format(data['channel'], data['value'])
     #print(message)
 
     ser.write(str(message).encode())
@@ -86,10 +86,17 @@ for i in range(fader_count):
 
 while True:
     fader_values = get_faders()
-    fd = [{'channel': 1, 'value_start': current_values[1], 'value_end': fader_values[0]}]
+    fd = [{'channel': 2, 'value_start': 0, 'value_end': 255},
+           {'channel': 3, 'value_start': 0, 'value_end': 255},
+           {'channel': 4, 'value_start': 0, 'value_end': 255},
+           {'channel': 5, 'value_start': 0, 'value_end': 255},
+           {'channel': 6, 'value_start': 0, 'value_end': 255},
+           {'channel': 7, 'value_start': 0, 'value_end': 255}]
 
     try:
-        fade_channels(ser, fd, fader_values[1] / 100)
+        #if ser.inWaiting() > 0:
+            #print(ser.read(ser.inWaiting() ))
+        fade_channels(ser, fd, 5)
     except OSError:
         print("Connection Lost!")
         ser = connect()
