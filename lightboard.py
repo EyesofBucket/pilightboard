@@ -38,8 +38,8 @@ def get_faders():
     return(position)
 
 def write_channel(ser, data):
-    message = data['value'] + (1000 * (data['channel'] + 1))
-    #print(message)
+    message = 's{0} {1}'.format(data['channel'], data['value'])
+    print(message)
 
     ser.write(str(message).encode())
     current_values[data['channel']] = data['value']

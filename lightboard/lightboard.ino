@@ -1,43 +1,59 @@
-int val;
-int ch[] = {0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 20, 21, 22, 23, 29, 30};
-int x = 1;
-int chnum = 0;
-int chval = 0;
-#define ch_count 16
-#define multi 1000
-#define led 13
+#include <stdio.h>
+
+static int channelPins[] = {0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 20, 21, 22, 23, 29, 30};
+static int channelCount 16;
+static int ledPin 13;
+
+char inputBuffer[16];
+int bufferPosition = 0;
 
 void setup() {
-  pinMode(led, OUTPUT);
-  digitalWrite(led, HIGH);
-  // set all pins
-  while(x <= ch_count) {
-    pinMode(ch[x], OUTPUT);
-    x++;
-  }
-  Serial.begin(9600); // opens serial port, sets data rate to 9600 bps
+    pinMode(ledPin, OUTPUT);
+    digitalWrite(ledPin, HIGH);
+
+    for(i = 0; i < channelCount; i++) {
+        pinMode(channelPins[x], OUTPUT);
+    }
+
+    Serial.begin(9600);
 }
 
 void loop() {
-  while(Serial.available()) {
-    Serial.setTimeout(3);
-    val = (Serial.parseInt());
-    Serial.read();
-   
-    chnum = float(val) / float(multi);
-    chval = val % multi;
-    if(chnum==6 && chval==127) {
-      analogWrite(ch[0], 255);
-	  analogWrite(ch[1], 255);
-	  analogWrite(ch[2], 255);
-	  analogWrite(ch[3], 255);
-	  analogWrite(ch[4], 255);
-	  analogWrite(ch[5], 255);
-	  
+    if(Serial.available()) {
+        char incomingByte = Serial.read();
+
+        if (incomingByte == '\n') {
+            inputBuffer[bufferPosition] = '\0';
+            bufferPosition = 0;
+            processCommand(inputBuffer);
+        } else {
+            inputBuffer[bufferPosition++] = incomingByte;
+            // Overflow protection
+            if (bufferPosition >= sizeof(inputBuffer) - 1) {
+                bufferPosition = sizeof(inputBuffer) - 1;
+            }
+        }
     }
-    analogWrite(ch[chnum], chval);
+}
+
+void processCommand(char* command) {
+    switch(command[0]) {
+        case 's':
+            setChannel(command + 1);
+        default:
+            return 1;
+    }
+    return 0;
+}
+
+void setChannel(char* command) {
+    int channel;
+    int value;
     
-    //Serial.print(chnum);
-    //Serial.print("\n");
-  }
+    if (sscanf(str, "%d %d", &channel, &value) == 2) {
+        analogWrite(ch[chnum], chval);
+    } else {
+        return 1;
+    }
+    return 0;
 }
