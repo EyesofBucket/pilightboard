@@ -1,6 +1,7 @@
 import os
 import time
 import serial
+import threading
 import busio
 import digitalio
 import board
@@ -66,6 +67,12 @@ def fade_channels(ser, data, duration):
         ch_data = {'channel': d['channel'], 'value': d['value_end']}
         write_channel(ser, ch_data)
 
+def read_serial(ser):
+    while True:
+        if ser.in_waiting > 0:
+            line = ser.readline().decode('utf-8').rstrip()
+            print(f"[CONTROL BOX] {line}")
+
 print('=================')
 print('  Pi Lightboard  ')
 print('=================')
@@ -83,6 +90,9 @@ mcp2 = MCP.MCP3008(spi, cs2)
 faders = []
 for i in range(fader_count):
     faders.append(eval('AnalogIn(mcp1, MCP.P{0})'.format(i)))
+
+thread = threading.Thread(target=read_serial, args=(ser,))
+thread.start()
 
 while True:
     fader_values = get_faders()

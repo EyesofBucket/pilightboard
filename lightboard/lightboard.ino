@@ -26,11 +26,13 @@ void loop() {
             inputBuffer[bufferPosition] = '\0';
             bufferPosition = 0;
             processCommand(inputBuffer);
+
         } else {
             inputBuffer[bufferPosition++] = incomingByte;
-            // Overflow protection
+
             if (bufferPosition >= sizeof(inputBuffer) - 1) {
                 bufferPosition = sizeof(inputBuffer) - 1;
+                Serial.printf("ERROR: Input buffer overflow: %s\n", inputBuffer);
             }
         }
     }
