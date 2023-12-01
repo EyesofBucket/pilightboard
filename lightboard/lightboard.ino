@@ -52,7 +52,7 @@ int setChannel(char* command) {
     int channel;
     int value;
     
-    if (sscanf(command, "%d %d", &channel, &value) == 2) {
+    if (sscanf(command, "%d:%d", &channel, &value) == 2) {
         analogWrite(channel, value);
     } else {
         return 1;
