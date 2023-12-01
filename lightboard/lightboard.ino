@@ -1,6 +1,6 @@
 #include "writefix.h"
 
-static int channelPins[] = {0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 20, 21, 22, 23, 29, 30};
+static int channelPins[] = {0,3,4,2,6,7,5,9,10,8,20,21,14,23,29,22,30};
 static int channelCount = 16;
 static int ledPin = 13;
 
@@ -42,7 +42,9 @@ int processCommand(char* command) {
     switch(command[0]) {
         case 's':
             setChannel(command + 1);
+            break;
         default:
+            Serial.printf("ERROR: Invalid command: %s\n", command);
             return 1;
     }
     return 0;
@@ -52,10 +54,11 @@ int setChannel(char* command) {
     int channel;
     int value;
     
-    if (sscanf(command, "%d %d", &channel, &value) == 2) {
-        analogWrite(channel, value);
+    if (sscanf(command, "%d:%d", &channel, &value) == 2) {
+        analogWrite(channelPins[channel], value);
     } else {
         return 1;
+        Serial.printf("ERROR: setChannel: Invalid syntax: %s\n", command);
     }
     return 0;
 }
